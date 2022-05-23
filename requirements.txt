@@ -1,0 +1,15 @@
+h5py
+pandas
+torch
+numpy
+gym
+matplotlib
+Pybullet
+opencv-python
+scikit-learn
+catalyst
+nibabel
+seaborn
+kmeans_pytorch
+datetime
+torch_geometric

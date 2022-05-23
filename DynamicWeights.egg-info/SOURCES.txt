@@ -1,0 +1,8 @@
+README.md
+setup.py
+DynamicWeights/__init__.py
+DynamicWeights.egg-info/PKG-INFO
+DynamicWeights.egg-info/SOURCES.txt
+DynamicWeights.egg-info/dependency_links.txt
+DynamicWeights.egg-info/requires.txt
+DynamicWeights.egg-info/top_level.txt
