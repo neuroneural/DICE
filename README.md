@@ -1,11 +1,13 @@
-# Deep Dynamic Effective Connectivity Estimation from Multivariate Time Series
+# Through the looking glass: deep interpretable dynamic directed connectivity in resting fMRI
 
 
 
 
 Usman Mahmood, Zengin Fu, Vince D. Calhoun, Sergey M. Plis
 
-https://arxiv.org/abs/2202.02393 (Accepted at IJCNN 2022)
+Journal paper version in review 
+
+
 
 
 
@@ -27,7 +29,7 @@ conda install sklearn
 # PyTorch
 conda install pytorch torchvision -c pytorch
 git clone https://github.com/UsmanMahmood27/DECENNT.git
-cd DECENNT
+cd DICE
 pip install -e .
 pip install -r requirements.txt
 ```
