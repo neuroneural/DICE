@@ -496,20 +496,20 @@ class the_works_trainer(Trainer):
 
         # ortho_loss = reg * ortho_loss
 
-        # for name, param in self.model.garo_key_components.named_parameters():
+        # for name, param in self.model.lta_key_components.named_parameters():
         #     if 'bias' not in name:
         #         param_flat = param.view(param.shape[0], -1)
         #         sym = torch.mm(param_flat, torch.t(param_flat))
         #         sym -= torch.eye(param_flat.shape[0],device=self.device)
         #         orth_loss = orth_loss + (reg * sym.abs().sum())
-        # for name, param in self.model.garo_query_components.named_parameters():
+        # for name, param in self.model.lta_query_components.named_parameters():
         #     if 'bias' not in name:
         #         param_flat = param.view(param.shape[0], -1)
         #         sym = torch.mm(param_flat, torch.t(param_flat))
         #         sym -= torch.eye(param_flat.shape[0],device=self.device)
         #         orth_loss = orth_loss + (reg * sym.abs().sum())
 
-        for name, param in self.model.sero_embed.named_parameters():
+        for name, param in self.model.gta_embed.named_parameters():
             if 'bias' not in name:
                 # param_flat = param.view(param.shape[0], -1)
                 # sym = torch.mm(param_flat, torch.t(param_flat))
@@ -517,7 +517,7 @@ class the_works_trainer(Trainer):
                 # orth_loss = orth_loss + (reg * sym.abs().sum())
                 lstm_loss += (reg * torch.norm(param,p=1))
 
-        for name, param in self.model.sero_attend.named_parameters():
+        for name, param in self.model.gta_attend.named_parameters():
             if 'bias' not in name:
                 lstm_loss += (reg * torch.norm(param,p=1))
 
@@ -598,10 +598,10 @@ class the_works_trainer(Trainer):
         # for name, param in self.model.multihead_attn_temporal.named_parameters():
         #     if 'bias' not in name:
         #         lstm_loss += (reg * torch.norm(param,p=1))
-        # for name, param in self.model.garo_key.named_parameters():
+        # for name, param in self.model.lta_key.named_parameters():
         #     if 'bias' not in name:
         #         lstm_loss += (reg * torch.sum(torch.abs(param)))
-        # for name, param in self.model.garo_query.named_parameters():
+        # for name, param in self.model.lta_query.named_parameters():
         #     if 'bias' not in name:
         #         lstm_loss += (reg * torch.sum(torch.abs(param)))
 
