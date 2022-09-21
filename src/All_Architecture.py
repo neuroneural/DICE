@@ -85,17 +85,17 @@ class combinedModel(nn.Module):
         #     nn.Linear(32, 1),
         # )
 
-        # self.garo_query = nn.Linear(self.n_regions * self.n_regions, self.n_regions * self.n_regions).to(self.device)
-        # self.garo_key = nn.Linear(self.n_regions * self.n_regions, self.n_regions * self.n_regions).to(self.device)
-        # self.garo_dropout = nn.Dropout(0.1)
+        # self.lta_query = nn.Linear(self.n_regions * self.n_regions, self.n_regions * self.n_regions).to(self.device)
+        # self.lta_key = nn.Linear(self.n_regions * self.n_regions, self.n_regions * self.n_regions).to(self.device)
+        # self.lta_dropout = nn.Dropout(0.1)
 
 
-        self.sero_embed = nn.Sequential(nn.Linear(self.n_regions * self.n_regions, round(self.upscale * self.n_regions * self.n_regions)),
+        self.gta_embed = nn.Sequential(nn.Linear(self.n_regions * self.n_regions, round(self.upscale * self.n_regions * self.n_regions)),
                                         )#.to(self.device_two)
 
-        self.sero_norm = nn.Sequential(nn.BatchNorm1d(round(self.upscale * self.n_regions * self.n_regions)), nn.ReLU())#.to(self.device_two)
+        self.gta_norm = nn.Sequential(nn.BatchNorm1d(round(self.upscale * self.n_regions * self.n_regions)), nn.ReLU())#.to(self.device_two)
 
-        self.sero_attend = nn.Sequential(nn.Linear(round(self.upscale * self.n_regions * self.n_regions), round(self.upscale2 * self.n_regions * self.n_regions)),
+        self.gta_attend = nn.Sequential(nn.Linear(round(self.upscale * self.n_regions * self.n_regions), round(self.upscale2 * self.n_regions * self.n_regions)),
                                          nn.ReLU(),
                                          nn.Linear(round(self.upscale2 * self.n_regions * self.n_regions), 1))#.to(self.device_two)
 
@@ -109,19 +109,19 @@ class combinedModel(nn.Module):
 
 
 
-        # self.sero_embed_embeddings = nn.Linear(self.n_regions * self.attention_embedding,
+        # self.gta_embed_embeddings = nn.Linear(self.n_regions * self.attention_embedding,
         #                             round(self.upscale * self.n_regions * self.attention_embedding)).to(self.device)
         #
-        # self.sero_norm_embeddings = nn.Sequential(nn.BatchNorm1d(round(self.upscale * self.n_regions * self.attention_embedding)),
+        # self.gta_norm_embeddings = nn.Sequential(nn.BatchNorm1d(round(self.upscale * self.n_regions * self.attention_embedding)),
         #                                nn.ReLU()).to(self.device)
         #
-        # self.sero_attend_embeddings = nn.Linear(round(self.upscale * self.n_regions * self.attention_embedding), 1).to(self.device)
+        # self.gta_attend_embeddings = nn.Linear(round(self.upscale * self.n_regions * self.attention_embedding), 1).to(self.device)
         #
-        self.sero_dropout = nn.Dropout(0.35)
+        self.gta_dropout = nn.Dropout(0.35)
 
-        # self.garo_query_components = nn.Linear(self.n_regions, self.n_regions)
-        # self.garo_key_components = nn.Linear(self.n_regions, self.n_regions)
-        # self.garo_dropout_components = nn.Dropout(0.1)
+        # self.lta_query_components = nn.Linear(self.n_regions, self.n_regions)
+        # self.lta_key_components = nn.Linear(self.n_regions, self.n_regions)
+        # self.lta_dropout_components = nn.Dropout(0.1)
 
 
 
@@ -331,23 +331,23 @@ class combinedModel(nn.Module):
 
                 # param = param + torch.abs(torch.min(param))
 
-            # for name, param in self.garo_key.named_parameters():
+            # for name, param in self.lta_key.named_parameters():
             #     if 'weight' in name:
             #         nn.init.kaiming_normal_(param,mode='fan_in')
             #
-            # for name, param in self.garo_query.named_parameters():
+            # for name, param in self.lta_query.named_parameters():
             #     if 'weight' in name:
             #         nn.init.kaiming_normal_(param,mode='fan_in')
             #
-            # for name, param in self.garo_key_components.named_parameters():
+            # for name, param in self.lta_key_components.named_parameters():
             #     if 'weight' in name:
             #         nn.init.kaiming_normal_(param,mode='fan_in')
             #
-            # for name, param in self.garo_query_components.named_parameters():
+            # for name, param in self.lta_query_components.named_parameters():
             #     if 'weight' in name:
             #         nn.init.kaiming_normal_(param,mode='fan_in')
 
-            for name, param in self.sero_embed.named_parameters():
+            for name, param in self.gta_embed.named_parameters():
                 # print('name = ',name)
                 if 'weight' in name:
                     nn.init.kaiming_normal_(param,mode='fan_in')
@@ -356,7 +356,7 @@ class combinedModel(nn.Module):
                     # print(torch.min(param))
 
 
-            for name, param in self.sero_attend.named_parameters():
+            for name, param in self.gta_attend.named_parameters():
                 # print(name)
 
                 if 'weight' in name:
@@ -374,7 +374,7 @@ class combinedModel(nn.Module):
 
                 # print(param)
                     # print(torch.min(param))
-            # for name, param in self.sero_attend.named_parameters():
+            # for name, param in self.gta_attend.named_parameters():
             #     print('-------------------')
             #     if 'weight' in name:
             #         print(name)
@@ -467,7 +467,7 @@ class combinedModel(nn.Module):
     # def means_times_attn_weights(self,means,graph_attention):
     #     return  torch.squeeze(torch.bmm(graph_attention,means.permute(0,2,1)))
 
-    def sero_attention_embeddings(self, x, node_axis=1, dimension='time', mode='train'):
+    def gta_attention_embeddings(self, x, node_axis=1, dimension='time', mode='train'):
         if dimension == 'time':
 
 
@@ -477,8 +477,8 @@ class combinedModel(nn.Module):
             a = x_readout.shape[0]
             b = x_readout.shape[1]
             x_readout = x_readout.reshape(-1, x_readout.shape[2])
-            x_embed = self.sero_norm_embeddings(self.sero_embed_embeddings(x_readout))
-            x_graphattention = self.sero_attend_embeddings(x_embed).squeeze()
+            x_embed = self.gta_norm_embeddings(self.gta_embed_embeddings(x_readout))
+            x_graphattention = self.gta_attend_embeddings(x_embed).squeeze()
             x_graphattention = (x_graphattention.reshape(a, b))
 
             return (x * (x_graphattention.unsqueeze(-1))).mean(node_axis)
@@ -501,14 +501,14 @@ class combinedModel(nn.Module):
     #     values, indices = x_graphattention.max(1)
     #     return torch.unsqueeze(x[np.arange(x.shape[0]),indices,:],dim=1) ,indices
 
-    def sero_attention(self,x,node_axis=1,outputs='', dimension='time',mode='train'):
+    def gta_attention(self,x,node_axis=1,outputs='', dimension='time',mode='train'):
         if dimension=='time':
 
-            # x_readout = (self.sero_embed(x))
+            # x_readout = (self.gta_embed(x))
             # a = x_readout.shape[0]
             # b = x_readout.shape[1]
-            # x_readout = self.sero_norm(x_readout.reshape(-1, x_readout.shape[2]))
-            # x_graphattention = (self.sero_attend(x_readout).squeeze())
+            # x_readout = self.gta_norm(x_readout.reshape(-1, x_readout.shape[2]))
+            # x_graphattention = (self.gta_attend(x_readout).squeeze())
             # x_graphattention = torch.sigmoid(x_graphattention.reshape(a, b))
             # print('min = ', torch.min(x))
             x_readout = x.mean(node_axis, keepdim=True)
@@ -516,9 +516,9 @@ class combinedModel(nn.Module):
             a = x_readout.shape[0]
             b = x_readout.shape[1]
             x_readout = x_readout.reshape(-1,x_readout.shape[2])
-            x_embed = self.sero_norm(self.sero_embed(x_readout))
+            x_embed = self.gta_norm(self.gta_embed(x_readout))
             # print('x embed min = ', torch.min(x_embed))
-            x_graphattention = (self.sero_attend(x_embed).squeeze()).reshape(a, b)
+            x_graphattention = (self.gta_attend(x_embed).squeeze()).reshape(a, b)
             # print('x_graphattention min = ', torch.min(x_graphattention))
             # return
             # print('min = ', x_graphattention.min().item())
@@ -543,7 +543,7 @@ class combinedModel(nn.Module):
             # x_graphattention = (x_graphattention - torch.min(x_graphattention,dim=1,keepdim=True).values) / (torch.max(x_graphattention,dim=1,keepdim=True).values - torch.min(x_graphattention,dim=1,keepdim=True).values)
             # x_graphattention = x_graphattention * 2
             # x_graphattention = x_graphattention - 1
-            # x = self.sero_norm_x(x)
+            # x = self.gta_norm_x(x)
             # permute_idx = list(range(node_axis)) + [len(x_graphattention.shape) - 1] + list(
             #     range(node_axis, len(x_graphattention.shape) - 1))
             # x_graphattention = x_graphattention.permute(permute_idx)
@@ -596,18 +596,18 @@ class combinedModel(nn.Module):
 
 
         else:
-            x_q = self.garo_query_components(x.mean(node_axis, keepdims=True))
-            x_k = self.garo_key_components(x)
+            x_q = self.lta_query_components(x.mean(node_axis, keepdims=True))
+            x_k = self.lta_key_components(x)
             x_graphattention = (torch.matmul(x_q, x_k.permute(0, 2, 1))).squeeze(1)
-            return self.sero_dropout(x * (x_graphattention.unsqueeze(-1))), x_graphattention
+            return self.gta_dropout(x * (x_graphattention.unsqueeze(-1))), x_graphattention
 
 
-    def garo_attention(self,x,node_axis=1, dimension='time',mode='train'):
+    def lta_attention(self,x,node_axis=1, dimension='time',mode='train'):
         if dimension=='time':
             #
             # x = self.relu(x)
-            x_q = (self.garo_query(x.mean(node_axis, keepdims=True)))
-            x_k = (self.garo_key(x))
+            x_q = (self.lta_query(x.mean(node_axis, keepdims=True)))
+            x_k = (self.lta_key(x))
             x_graphattention = (torch.matmul(x_q, x_k.permute(0, 2, 1))).squeeze(1)
             # x_graphattention = self.relu(x_graphattention)
             # x = self.relu(x)
@@ -640,8 +640,8 @@ class combinedModel(nn.Module):
             return (x * (x_graphattention.unsqueeze(-1))).mean(node_axis), 'FC2', x_graphattention
 
         else:
-            x_q = self.garo_query_components(x.mean(node_axis, keepdims=True))
-            x_k = self.garo_key_components(x)
+            x_q = self.lta_query_components(x.mean(node_axis, keepdims=True))
+            x_k = self.lta_key_components(x)
             x_graphattention = (torch.matmul(x_q, x_k.permute(0, 2, 1))).squeeze(1)
             # print(x_graphattention.shape)
             # v, indexes = torch.kthvalue(x_graphattention, 53, dim=1)
@@ -945,7 +945,7 @@ class combinedModel(nn.Module):
             # outputs = outputs.reshape(W, B, R, self.attention_embedding).permute(1, 0, 2, 3).contiguous()
             # outputs = outputs.reshape(B,W,-1)
 
-            FC, FC2, FC_time_weights = self.sero_attention(attn_weights,dimension='time',mode=mode)
+            FC, FC2, FC_time_weights = self.gta_attention(attn_weights,dimension='time',mode=mode)
             # FC = FC.to(self.device_two)
             # FC2 = FC2.to(self.device_two)
             # FC_time_weights = FC_time_weights.to(self.device_two)
@@ -975,7 +975,7 @@ class combinedModel(nn.Module):
             # lt = FC[:]<0.5
             # FC[lt]=0
             # print(FC.shape)
-            # FC, FC_components_weights = self.final_attention(FC.reshape(-1,1))#self.garo_attention(FC, dimension='components',mode=mode)
+            # FC, FC_components_weights = self.final_attention(FC.reshape(-1,1))#self.lta_attention(FC, dimension='components',mode=mode)
             # FC = FC.reshape(B, R, R)
             # print(FC.shape)
             # return
@@ -995,7 +995,7 @@ class combinedModel(nn.Module):
 
             # outputs = outputs.reshape(W, B, R, self.attention_embedding).permute(1, 0, 2, 3).contiguous()
             # outputs = outputs.reshape(B,W,-1)
-            # outputs,_,_ = self.sero_attention_embeddings(outputs,dimension='time',mode=mode)
+            # outputs,_,_ = self.gta_attention_embeddings(outputs,dimension='time',mode=mode)
             # outputs = outputs.reshape(B, R, self.attention_embedding)
             # outputs = outputs.to(self.device_two)
             # FC = torch.transpose(FC,1,2)
