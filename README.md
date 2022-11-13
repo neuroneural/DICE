@@ -1,11 +1,9 @@
 # Through the looking glass: deep interpretable dynamic directed connectivity in resting fMRI
 
-
-
-
 Usman Mahmood, Zengin Fu, Vince D. Calhoun, Sergey M. Plis
 
-Journal paper version in review 
+The code accompanyin the paper [Through the looking glass: deep interpretable dynamic directed connectivity in resting fMRI](https://www.sciencedirect.com/science/article/pii/S1053811922008588)
+
 
 
 
